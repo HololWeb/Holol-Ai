@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holol AI - Your Fun Assistant ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffd700 50%, #ffb300 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-emojis {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            animation: floatUp 15s linear infinite;
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.5), 0 0 0 3px #ffd700, 0 0 0 6px #fff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(30px) scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f5c842, #ffd700, #f5a623, #ff6b6b);
+            background-size: 300% 300%;
+            animation: gradientMove 4s ease infinite;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px dashed #fff;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            animation: bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .logo h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #2c1810;
+            font-size: 2.2rem;
+            text-shadow: 3px 3px 0 rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .logo h1 span {
+            background: #2c1810;
+            color: #ffd700;
+            padding: 2px 15px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            display: inline-block;
+            animation: wiggle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #2c1810;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        .status-dot.online {
+            background: #4caf50;
+            box-shadow: 0 0 10px #4caf50;
+        }
+
+        .status-dot.offline {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px #ff6b6b;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #2c1810;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .model-selector {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #2c1810;
+            font-size: 0.85rem;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            min-width: 160px;
+        }
+
+        .model-selector:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #fffdf5;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .chat-area::before {
+            content: '✨💬✨';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 1.5rem;
+            opacity: 0.2;
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: #fff9e6;
+            border-radius: 10px;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ffd700, #f5a623);
+            border-radius: 10px;
+            border: 2px solid #fff9e6;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 15px 22px;
+            border-radius: 22px;
+            animation: messagePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            word-wrap: break-word;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        @keyframes messagePop {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #ffd700, #f5c842);
+            color: #2c1810;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+            border: 2px solid #ffb300;
+        }
+
+        .message.user::before {
+            content: '😊 ';
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #fff;
+            color: #2c1810;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid #ffd700;
+        }
+
+        .message.ai::before {
+            content: '🤖 ';
+        }
+
+        .message.tool {
+            align-self: center;
+            background: linear-gradient(135deg, #f5f0e1, #fff9e6);
+            color: #5a4a2a;
+            font-size: 0.9rem;
+            padding: 12px 20px;
+            border-radius: 15px;
+            max-width: 85%;
+            border: 2px dashed #ffd700;
+            font-style: italic;
+        }
+
+        .message .sender {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .message .timestamp {
+            font-size: 0.65rem;
+            opacity: 0.4;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .input-area {
+            padding: 20px 30px;
+            background: #fffdf5;
+            border-top: 3px dashed #ffd700;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .input-area::before {
+            content: '✏️';
+            font-size: 1.5rem;
+            margin-right: 5px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 15px 25px;
+            border: 3px solid #ffd700;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            background: #fff;
+            color: #2c1810;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+        }
+
+        .input-area input:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.3);
+            transform: scale(1.02);
+        }
+
+        .input-area input::placeholder {
+            color: #b8a080;
+            font-weight: 400;
+        }
+
+        .input-area button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #ffd700, #ff6b6b, #f5a623);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            color: #2c1810;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .input-area button:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .input-area button:active:not(:disabled) {
+            transform: translateY(0) scale(0.95);
+        }
+
+        .input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 4px solid rgba(44, 24, 16, 0.1);
+            border-top: 4px solid #2c1810;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .creator-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ffd700);
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #2c1810;
+            margin-left: 5px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                height: 95vh;
+                border-radius: 25px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .logo h1 {
+                font-size: 1.6rem;
+            }
+
+            .logo-icon {
+                font-size: 2.2rem;
+            }
+
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .model-selector {
+                min-width: 120px;
+                font-size: 0.75rem;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .input-area {
+                flex-direction: column;
+                padding: 15px;
+            }
+
+            .input-area::before {
+                display: none;
+            }
+
+            .input-area button {
+                width: 100%;
+            }
+
+            .chat-area {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-emojis" id="floatingEmojis"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <span class="logo-icon">🤖</span>
+                <h1>Holol AI <span>✨ v2.0</span></h1>
+            </div>
+            <div class="header-controls">
+                <div class="status-indicator">
+                    <span class="status-dot online" id="statusDot"></span>
+                    <span id="statusText">Online 🟢</span>
+                </div>
+                <select class="model-selector" id="modelSelector">
+                    <option value="">🔃 Memuat...</option>
+                </select>
+                <button class="btn-clear" onclick="clearChat()">🗑️ Clear</button>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="message ai">
+                <div class="sender">🤖 Holol AI</div>
+                <strong>🌟 Halo! Saya Holol AI! 🌟</strong><br><br>
+                Saya asisten AI yang <strong>LUCU</strong> dan <strong>CERDAS</strong>! 🎉<br>
+                Saya bisa membantu dengan: Matematika / Baca Tulis File / Cuaca / Waktu / Web Search<br>
+                <span style="font-size:0.8rem; opacity:0.6;">⚡ Model: <span id="currentModelDisplay">-</span></span>
+                <br><span class="timestamp">✨ Baru saja ✨</span>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ketik pesan di sini... (Coba: 5*8 atau cuaca Jakarta) 🎯" onkeypress="handleKeyPress(event)">
+            <button id="sendBtn" onclick="sendMessage()">✨ Kirim 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        // ==============================
+        // Floating Emojis Background
+        // ==============================
+        function createFloatingEmojis() {
+            const container = document.getElementById('floatingEmojis');
+            const emojis = ['✨', '🌟', '⭐', '💛', '🌈', '🎉', '🎊', '💫', '🚀', '🎯', '💡', '😊', '🤖', '🧮', '📂', '🌐', '⏰', '🌦️'];
+            for (let i = 0; i < 15; i++) {
+                const span = document.createElement('span');
+                span.className = 'floating-emoji';
+                span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = (12 + Math.random() * 18) + 's';
+                span.style.animationDelay = (Math.random() * 20) + 's';
+                span.style.fontSize = (1.5 + Math.random() * 2.5) + 'rem';
+                container.appendChild(span);
+            }
+        }
+        createFloatingEmojis();
+
+        // ==============================
+        // API Config - OLLAMA (Local)
+        // ==============================
+        const OLLAMA_URL = "http://localhost:11434/api/chat";
+        const OLLAMA_TAGS_URL = "http://localhost:11434/api/tags";
+
+        // ==============================
+        // Tool Functions
+        // ==============================
+        let lastCity = null;
+
+        function calculator(expression) {
+            try {
+                const result = Function('"use strict"; return (' + expression + ')')();
+                return `🧮 Hasil kalkulator: ${expression} = ${result}`;
+            } catch {
+                return "❌ Perhitungan gagal! Coba operasi yang lebih sederhana!";
+            }
+        }
+
+        function readFile(filename) {
+            try {
+                const content = localStorage.getItem(`file_${filename}`);
+                if (content) return `📂 Isi file: ${content}`;
+                else return "📂 File tidak ditemukan! Buat dulu!";
+            } catch {
+                return "📂 Oops! Gagal membaca file!";
+            }
+        }
+
+        function writeFile(filename, content) {
+            try {
+                localStorage.setItem(`file_${filename}`, content);
+                return `✍️ Berhasil disimpan ke ${filename}! 🎉`;
+            } catch {
+                return "❌ Gagal menyimpan file!";
+            }
+        }
+
+        function webSearch(query) {
+            if (!query || query === 'undefined' || query.trim() === '') {
+                return "🔍 Maaf, saya tidak bisa mencari tanpa kata kunci. Coba berikan kata kunci yang jelas!";
+            }
+            const results = [
+                `🔍 Hasil pencarian tentang "${query}":`,
+                `📌 Wikipedia: ${query} sangat menarik!`,
+                `📰 Berita: ${query} sedang tren hari ini!`,
+                `💡 Fakta menarik tentang ${query}!`
+            ];
+            return `🌐 ${results.join('\n')}`;
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleString('id-ID', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            return `⏰ Waktu sekarang: ${timeStr}`;
+        }
+
+        function getWeather(city) {
+            if (!city || city === 'undefined' || city.trim() === '') {
+                return "🌦️ Maaf, saya tidak tahu cuaca untuk kota itu. Sebutkan nama kota yang jelas!";
+            }
+            lastCity = city;
+            const temps = [18, 22, 25, 28, 30, 15, 20];
+            const conditions = ['☀️ Cerah', '⛅ Berawan', '☁️ Mendung', '🌧️ Hujan Ringan', '🌈 Cerah'];
+            const temp = temps[Math.floor(Math.random() * temps.length)];
+            const condition = conditions[Math.floor(Math.random() * conditions.length)];
+            return `🌦️ Cuaca di ${city}: ${temp}°C, ${condition}`;
+        }
+
+        const tools = {
+            calculator: calculator,
+            read_file: readFile,
+            write_file: writeFile,
+            web_search: webSearch,
+            get_current_time: getCurrentTime,
+            get_weather: getWeather
+        };
+
+        // ==============================
+        // System Prompt
+        // ==============================
+        const SYSTEM_PROMPT = `ANDA ADALAH ASISTEN AI BERNAMA HOLOL AI.
+
+ATURAN:
+1. Jika user menyapa → JAWAB LANGSUNG.
+2. Jika user minta menghitung → {"tool":"calculator","params":{"expression":"..."}}
+3. Jika user minta cuaca → {"tool":"get_weather","params":{"city":"..."}}
+4. Jika user minta waktu → {"tool":"get_current_time","params":{}}
+5. Jika user minta cari info → {"tool":"web_search","params":{"query":"..."}}
+
+JANGAN menjelaskan cara menggunakan tool! OUTPUT HANYA JSON!`;
+
+        // ==============================
+        // Chat State
+        // ==============================
+        let messages = [
+            { role: "system", content: SYSTEM_PROMPT }
+        ];
+
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const modelSelector = document.getElementById('modelSelector');
+        const currentModelDisplay = document.getElementById('currentModelDisplay');
+
+        // ==============================
+        // Test Koneksi ke Ollama
+        // ==============================
+        async function testOllamaConnection() {
+            try {
+                const response = await fetch(OLLAMA_TAGS_URL, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                }
+            } catch (e) {
+                console.warn('❌ Gagal koneksi:', e.message);
+            }
+            return null;
+        }
+
+        // ==============================
+        // Load Model dari Ollama
+        // ==============================
+        async function loadModels() {
+            try {
+                const data = await testOllamaConnection();
+                if (!data) throw new Error('Tidak bisa terhubung');
+                
+                const models = data.models || [];
+                modelSelector.innerHTML = '';
+                
+                if (models.length === 0) {
+                    modelSelector.innerHTML = `<option value="">⚠️ Tidak ada model</option>`;
+                    setStatus(false, 'Tidak ada model');
+                    return;
+                }
+                
+                models.sort((a, b) => a.name.localeCompare(b.name));
+                
+                models.forEach(model => {
+                    const opt = document.createElement('option');
+                    opt.value = model.name;
+                    const size = model.details?.parameter_size || '?';
+                    opt.textContent = `${model.name} (${size})`;
+                    modelSelector.appendChild(opt);
+                });
+                
+                // Prioritaskan model 8B
+                const preferredModels = ['llama3.1:8b', 'deepseek-r1:8b'];
+                let selected = models.find(m => preferredModels.includes(m.name));
+                if (!selected) selected = models[0];
+                
+                modelSelector.value = selected.name;
+                currentModelDisplay.textContent = selected.name;
+                
+                console.log('✅ Model dimuat:', models.map(m => m.name).join(', '));
+                setStatus(true, 'Online 🟢');
+                
+            } catch (error) {
+                console.error('❌ Gagal memuat model:', error);
+                modelSelector.innerHTML = `<option value="">⚠️ Ollama offline</option>`;
+                setStatus(false, 'Ollama Offline 🔴');
+            }
+        }
+
+        // ==============================
+        // UI Helper Functions
+        // ==============================
+        function addMessage(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            let senderText = type === 'user' ? '👤 Anda' : type === 'tool' ? '⚡ Tool' : '🤖 Holol AI';
+
+            let content = text.replace(/\n/g, '<br>');
+            if (type === 'ai' && /holol|eddy|juliani|valerian|matthew|sinar88|ayong|jason/i.test(text)) {
+                content += ' <span class="creator-badge">✨ Diciptakan oleh Holol ✨</span>';
+            }
+
+            messageDiv.innerHTML = `
+                <div class="sender">${senderText}</div>
+                ${content}
+                <span class="timestamp">${timestamp}</span>
+            `;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function setStatus(online, message = '') {
+            if (online) {
+                statusDot.className = 'status-dot online';
+                statusText.textContent = message || 'Online 🟢';
+            } else {
+                statusDot.className = 'status-dot offline';
+                statusText.textContent = message || 'Offline 🔴';
+            }
+        }
+
+        function setLoading(loading) {
+            sendBtn.disabled = loading;
+            userInput.disabled = loading;
+            sendBtn.innerHTML = loading ? '<span class="spinner"></span> Berpikir... 💭' : '✨ Kirim 🚀';
+        }
+
+        // ==============================
+        // Panggil API Ollama
+        // ==============================
+        async function callOllama(userMessage) {
+            messages.push({ role: "user", content: userMessage });
+            
+            try {
+                const model = modelSelector.value;
+                if (!model || model.includes('⚠️')) {
+                    throw new Error('Tidak ada model yang dipilih!');
+                }
+                
+                const requestBody = {
+                    model: model,
+                    messages: messages,
+                    stream: false,
+                    temperature: 0.1,
+                    options: { num_predict: 300 }
+                };
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+                const response = await fetch(OLLAMA_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Ollama Error ${response.status}: ${errText}`);
+                }
+
+                const data = await response.json();
+                return data.message?.content || "Maaf, tidak ada balasan.";
+            } catch (error) {
+                console.error("API Error:", error);
+                throw error;
+            }
+        }
+
+        // ==============================
+        // DETEKSI MANUAL - FALLBACK
+        // ==============================
+        function detectMath(userMessage) {
+            // Deteksi operasi matematika sederhana
+            const mathPattern = /^[\d+\-*/().\s]+$/;
+            if (mathPattern.test(userMessage.trim())) {
+                try {
+                    const result = Function('"use strict"; return (' + userMessage + ')')();
+                    return {
+                        tool: 'calculator',
+                        params: { expression: userMessage },
+                        result: result
+                    };
+                } catch (e) {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        function detectWeather(userMessage) {
+            const match = userMessage.match(/cuaca\s+(\w+)/i);
+            if (match) {
+                return {
+                    tool: 'get_weather',
+                    params: { city: match[1] },
+                    result: null
+                };
+            }
+            return null;
+        }
+
+        function detectTime(userMessage) {
+            if (/jam|waktu|pukul|time/i.test(userMessage) && !/\d/.test(userMessage)) {
+                return {
+                    tool: 'get_current_time',
+                    params: {},
+                    result: null
+                };
+            }
+            return null;
+        }
+
+        // ==============================
+        // Ekstrak Tool dari Response
+        // ==============================
+        function extractToolFromResponse(reply) {
+            // Bersihkan dari markdown
+            let cleanReply = reply
+                .replace(/```json/g, '')
+                .replace(/```/g, '')
+                .replace(/^["']|["']$/g, '')
+                .trim();
+            
+            // Coba cari JSON yang valid
+            const jsonMatches = cleanReply.match(/\{[^{}]*"tool"\s*:\s*"[^"]+"[^{}]*\}/g);
+            if (!jsonMatches) return null;
+            
+            for (const match of jsonMatches) {
+                try {
+                    const data = JSON.parse(match);
+                    if (data.tool && tools[data.tool]) {
+                        const params = data.params || {};
+                        const values = Object.values(params);
+                        const isValid = values.length === 0 || values.every(v => v !== undefined && v !== 'undefined' && v !== '');
+                        if (isValid) {
+                            return data;
+                        }
+                    }
+                } catch (e) {}
+            }
+            return null;
+        }
+
+        // ==============================
+        // Kirim Pesan
+        // ==============================
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            if (!modelSelector.value || modelSelector.value.includes('⚠️')) {
+                addMessage('⚠️ Tidak ada model AI yang tersedia!', 'ai');
+                return;
+            }
+
+            addMessage(text, 'user');
+            userInput.value = '';
+            setLoading(true);
+            setStatus(false, 'Memproses...');
+
+            try {
+                // === FALLBACK: Deteksi manual dulu ===
+                let toolData = null;
+                let toolResult = null;
+
+                // Cek matematika
+                const mathData = detectMath(text);
+                if (mathData) {
+                    toolData = { tool: 'calculator', params: { expression: mathData.params.expression } };
+                    toolResult = calculator(mathData.params.expression);
+                }
+
+                // Cek cuaca
+                if (!toolData) {
+                    const weatherData = detectWeather(text);
+                    if (weatherData) {
+                        toolData = { tool: 'get_weather', params: { city: weatherData.params.city } };
+                        toolResult = getWeather(weatherData.params.city);
+                    }
+                }
+
+                // Cek waktu
+                if (!toolData) {
+                    const timeData = detectTime(text);
+                    if (timeData) {
+                        toolData = { tool: 'get_current_time', params: {} };
+                        toolResult = getCurrentTime();
+                    }
+                }
+
+                // Jika deteksi manual berhasil
+                if (toolData && toolResult) {
+                    addMessage(toolResult, 'tool');
+                    messages.push({ role: "assistant", content: JSON.stringify(toolData) });
+                    messages.push({ role: "user", content: toolResult });
+                    
+                    const finalReply = await callOllama(toolResult);
+                    addMessage(finalReply, 'ai');
+                    messages.push({ role: "assistant", content: finalReply });
+                    setStatus(true, 'Online 🟢');
+                    setLoading(false);
+                    userInput.focus();
+                    return;
+                }
+
+                // === Jika tidak terdeteksi manual, panggil AI ===
+                const reply = await callOllama(text);
+                let finalReplyText = reply;
+
+                const aiToolData = extractToolFromResponse(reply);
+                if (aiToolData) {
+                    const toolFunc = tools[aiToolData.tool];
+                    const params = aiToolData.params || {};
+                    const paramValues = Object.values(params);
+                    
+                    toolResult = toolFunc(...paramValues);
+                    addMessage(toolResult, 'tool');
+                    
+                    messages.push({ role: "assistant", content: JSON.stringify(aiToolData) });
+                    messages.push({ role: "user", content: toolResult });
+                    
+                    finalReplyText = await callOllama(toolResult);
+                }
+
+                addMessage(finalReplyText, 'ai');
+                messages.push({ role: "assistant", content: finalReplyText });
+                setStatus(true, 'Online 🟢');
+                
+            } catch (err) {
+                addMessage(`❌ Error: ${err.message}`, 'ai');
+                setStatus(false, 'Error 🔴');
+            } finally {
+                setLoading(false);
+                userInput.focus();
+            }
+        }
+
+        // ==============================
+        // Event Handler
+        // ==============================
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        function clearChat() {
+            if (confirm('🗑️ Hapus semua chat?')) {
+                chatArea.innerHTML = `
+                    <div class="message ai">
+                        <div class="sender">🤖 Holol AI</div>
+                        ✨ Chat dibersihkan! Tanyakan apa saja!<br>
+                        <span style="font-size:0.8rem; opacity:0.6;">⚡ Model: <span id="currentModelDisplay">${modelSelector.value || '-'}</span></span>
+                        <br><span class="timestamp">Baru saja</span>
+                    </div>`;
+                messages = [{ role: "system", content: SYSTEM_PROMPT }];
+                lastCity = null;
+                const display = document.getElementById('currentModelDisplay');
+                if (display) display.textContent = modelSelector.value || '-';
+            }
+        }
+
+        // ==============================
+        // Inisialisasi
+        // ==============================
+        loadModels();
+        setInterval(loadModels, 30000);
+        userInput.focus();
+        
+        console.log('🤖 Holol AI siap digunakan!');
+        console.log('💡 Saran: Pilih model llama3.1:8b atau deepseek-r1:8b untuk hasil terbaik');
+        console.log('🔧 Fallback deteksi aktif untuk: matematika, cuaca, waktu');
+    </script>
+</body>
+</html>
